@@ -1,0 +1,3 @@
+[submodule "include/libraries"]
+	path = include/libraries
+	url = https://github.com/ritchielrez/libraries
