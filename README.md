@@ -1,2 +1,2 @@
-# Terra
-## A lua compiler that compiles down to binary without any bytecode compilation
+# Thor
+## An Odin inspired language with personal touches
