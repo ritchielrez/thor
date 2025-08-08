@@ -7,9 +7,9 @@
 #define RIT_STR_IMPLEMENTATION
 #include "include/build.h"
 #include "include/defines.h"
-#include "include/external/arena_allocator.h"
-#include "include/external/rit_dyn_arr.h"
-#include "include/external/rit_str.h"
+#include "include/libraries/arena_allocator.h"
+#include "include/libraries/rit_dyn_arr.h"
+#include "include/libraries/rit_str.h"
 #include "include/utils.h"
 
 #if defined(__clang__)
@@ -28,9 +28,14 @@ char *cc = "cl";
 #pragma warning(disable : 4702)
 #endif  // _MSC_VER
 
+#define nullptr (void *)0
+
 char *target = "thor";
-char *src = "./src/main.c";
 char *include_dir = "./include/";
+
+#define SRC_FILES_LEN 4
+char *src_files[SRC_FILES_LEN] = {"./src/allocator.c", "./src/main.c",
+                                  "./src/parser.c", "./src/tokenizer.c"};
 
 void *arena_allocator_alloc(void *t_arena, size_t t_size_in_bytes) {
   return arena_alloc((Arena *)t_arena, t_size_in_bytes);
@@ -45,7 +50,7 @@ void *arena_allocator_realloc(void *t_arena, void *t_old_ptr,
   return arena_realloc((Arena *)t_arena, t_old_ptr, t_old_size_in_bytes,
                        t_new_size_in_bytes);
 }
-Arena arena;
+Arena arena = {nullptr, nullptr};
 rstr_allocator allocator = {arena_allocator_alloc, arena_allocator_free,
                             arena_allocator_realloc, &arena};
 
@@ -80,13 +85,16 @@ void com_prg() {
     char outflag[BIN_NAME_MAX_SZ + 8];
     sprintf(outflag, "-Fe%s.exe", target);
     cmd_append(cflags, &allocator, "-EHsc", "-nologo", "-W4", "-Zi", "-MTd",
-               "-D_CRT_SECURE_NO_WARNINGS", "-DDEBUG", "-fsanitize=address",
+               "-D_CRT_SECURE_NO_WARNINGS",
+               "-DDEBUG", /* "-fsanitize=address", */
                outflag);
   }
   cmd(build_cmd, &allocator);
   cmd_push_back(build_cmd, cc, &allocator);
   cmd_append_cmd(build_cmd, cflags, &allocator);
-  cmd_push_back(build_cmd, src, &allocator);
+  for (size_t i = 0; i < SRC_FILES_LEN; ++i) {
+    cmd_push_back(build_cmd, src_files[i], &allocator);
+  }
   printf("[INFO] Compiling source code...\n[INFO] cmd: ");
   cmd_append(build_cmd, &allocator, "-I", include_dir);
   rda_for_each(it, build_cmd) { printf("%s ", *it); }
@@ -130,11 +138,7 @@ void com_and_run_prg(int *argc, char ***argv) {
 }
 
 int main(int argc, char **argv) {
-  // char buf[BIN_NAME_MAX_SZ];
-  // char *prg = utils_prg_name(&argc, &argv, buf, BIN_NAME_MAX_SZ);
-  arena = arena_init(DEFAULT_CHUNK_MAX_COUNT);
-  char *prg = argv[0];
-  utils_shift_args(&argc, &argv);
+  char *prg = utils_shift_args(&argc, &argv);
 
   if (argc < 1) {
     help_msg(utils_shift_args_p(&argc, &argv), prg);
