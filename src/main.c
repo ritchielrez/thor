@@ -1,34 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define ARENA_ALLOCATOR_IMPLEMENTATION
-#define TOKENIZER_IMPLEMENTATION
-#define PARSER_IMPLEMENTATION
+#include "allocator.h"
 #include "defines.h"
-#include "external/arena_allocator.h"
+#include "libraries/arena_allocator.h"
 #include "parser.h"
+#include "tokenizer.h"
 #include "utils.h"
 
-void *arena_allocator_alloc(void *t_arena, size_t t_size_in_bytes) {
-  return arena_alloc((Arena *)t_arena, t_size_in_bytes);
-}
-void arena_allocator_free(void *t_arena, void *t_ptr) {
-  (void)t_ptr;
-  (void)t_arena;
-}
-void *arena_allocator_realloc(void *t_arena, void *t_old_ptr,
-                              size_t t_old_size_in_bytes,
-                              size_t t_new_size_in_bytes) {
-  return arena_realloc((Arena *)t_arena, t_old_ptr, t_old_size_in_bytes,
-                       t_new_size_in_bytes);
-}
-
-Arena arena;
+Arena arena = {nullptr, nullptr};
 rstr_allocator allocator = {arena_allocator_alloc, arena_allocator_free,
                             arena_allocator_realloc, &arena};
 
 void help_msg(const char *subcmd, const char *utils_prg_name) {
-  if (subcmd == NULL) {
+  if (subcmd == nullptr) {
     printf("Usage: %s <subcommand> [args]\n", utils_prg_name);
     printf("subcommands:\n");
     printf("    com     Compile .th file\n");
@@ -45,15 +30,7 @@ void help_msg(const char *subcmd, const char *utils_prg_name) {
 }
 
 int main(int argc, char **argv) {
-  arena = arena_init(0);
-#ifdef BUILD_WINDOWS
-  char buf[BIN_NAME_MAX_SZ];
-  char *prg = utils_prg_name(&argc, &argv, buf, BIN_NAME_MAX_SZ);
-#endif
-
-#ifdef BUILD_LINUX
   char *prg = utils_shift_args(&argc, &argv);
-#endif
 
   if (argc < 1) {
     help_msg(utils_shift_args_p(&argc, &argv), prg);
@@ -66,7 +43,8 @@ int main(int argc, char **argv) {
     help_msg(utils_shift_args_p(&argc, &argv), prg);
   } else if (!strcmp(subcmd, "com")) {
     parser_create(parser);
-    parse_prg(&parser, argv[0]);
+    parse(&parser, "examples/exit.th");
+    parser_deinit(&parser);
   } else if (!strcmp(subcmd, "run")) {
     assert(0 && "run subcommand is not implemented");
   } else {
