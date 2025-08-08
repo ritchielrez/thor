@@ -5,9 +5,8 @@
 #include <stdbool.h>
 
 #include "defines.h"
-#define RIT_STR_IMPLEMENTATION
-#include "external/rit_dyn_arr.h"
-#include "external/rit_str.h"
+#include "libraries/rit_dyn_arr.h"
+#include "libraries/rit_str.h"
 
 #if defined(BUILD_WINDOWS)
 typedef HANDLE cmd_proc_t;
@@ -31,8 +30,8 @@ static inline void ctx_allocator_free(void *t_ctx, void *t_ptr) {
 }
 
 static inline void *ctx_allocator_realloc(void *t_ctx, void *t_old_ptr,
-                            size_t t_old_size_in_bytes,
-                            size_t t_new_size_in_bytes) {
+                                          size_t t_old_size_in_bytes,
+                                          size_t t_new_size_in_bytes) {
   (void)t_ctx;
   (void)t_old_size_in_bytes;
   return realloc(t_old_ptr, t_new_size_in_bytes);
@@ -118,8 +117,8 @@ static inline cmd_proc_t cmd_run_async__(cmd_t *t_cmd) {
 
 static inline bool cmd_proc_wait(cmd_proc_t t_proc) {
   if (t_proc == CMD_INVALID_PROC) return false;
-    // Code stolen from Alexey Kutepov's nob.h
-    // (https://github.com/tsoding/musializer/blob/master/nob.h)
+  // Code stolen from Alexey Kutepov's nob.h
+  // (https://github.com/tsoding/musializer/blob/master/nob.h)
 #if defined(BUILD_WINDOWS)
   DWORD result = WaitForSingleObject(t_proc,   // HANDLE hHandle,
                                      INFINITE  // DWORD  dwMilliseconds
