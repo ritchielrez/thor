@@ -42,3 +42,6 @@ build/
 
 # Sublime text
 *.sublime-workspace
+
+# Generated C files
+examples/*.c
