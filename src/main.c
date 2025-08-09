@@ -3,6 +3,7 @@
 
 #include "allocator.h"
 #include "defines.h"
+#include "generator.h"
 #include "libraries/arena_allocator.h"
 #include "parser.h"
 #include "tokenizer.h"
@@ -42,8 +43,9 @@ int main(int argc, char **argv) {
   if (!strcmp(subcmd, "help")) {
     help_msg(utils_shift_args_p(&argc, &argv), prg);
   } else if (!strcmp(subcmd, "com")) {
-    parser_create(parser);
-    parse(&parser, "examples/exit.th");
+    parser_create(parser, "examples/exit.th");
+    parse(&parser);
+    generator("examples/exit.c", &(parser.prg));
     parser_deinit(&parser);
   } else if (!strcmp(subcmd, "run")) {
     assert(0 && "run subcommand is not implemented");

@@ -1,4 +1,5 @@
 #ifndef PARSER_H_INCLUDED
+#define PARSER_H_INCLUDED
 
 #include <stdint.h>
 
@@ -15,20 +16,25 @@ typedef struct {
   node_stmt_type type;
   union {
     node_stmt_exit stmt_exit;
-  };
+  } value;
 } node_stmt;
 
 typedef rda_struct(node_stmt) node_prg;
 
 typedef struct {
+  size_t idx;
   node_prg prg;
   rda_allocator *allocator;
+  tokenizer_t *tokenizer;
 } parser_t;
 
-#define parser_create(t_parser_name) parser_t t_parser_name = parser_init()
+#define parser_create(t_parser_name, t_file) \
+  parser_t t_parser_name = parser_init(t_file)
 
-parser_t parser_init();
-void parse(parser_t *t_parser, const char *t_file);
+parser_t parser_init(const char *t_file);
+void parse(parser_t *t_parser);
+token_t parser_peek(parser_t *t_parser, size_t t_offset);
+void parser_consume(parser_t *t_parser, size_t t_offset);
 void parser_deinit(parser_t *t_parser);
 
 #endif  // PARSER_H_INCLUDED
