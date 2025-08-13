@@ -33,9 +33,9 @@ char *cc = "cl";
 char *target = "thor";
 char *include_dir = "./include/";
 
-#define SRC_FILES_LEN 4
-char *src_files[SRC_FILES_LEN] = {"./src/allocator.c", "./src/main.c",
-                                  "./src/parser.c", "./src/tokenizer.c"};
+char *src_files[] = {"./src/allocator.c", "./src/main.c", "./src/parser.c",
+                     "./src/tokenizer.c"};
+const size_t SRC_FILES_LEN = sizeof(src_files) / sizeof(char *);
 
 void *arena_allocator_alloc(void *t_arena, size_t t_size_in_bytes) {
   return arena_alloc((Arena *)t_arena, t_size_in_bytes);
