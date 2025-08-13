@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include "defines.h"
 #include "libraries/rit_dyn_arr.h"
 #include "tokenizer.h"
 
@@ -36,5 +37,15 @@ void parse(parser_t *t_parser);
 token_t parser_peek(parser_t *t_parser, size_t t_offset);
 void parser_consume(parser_t *t_parser, size_t t_offset);
 void parser_deinit(parser_t *t_parser);
+
+INTERNAL_DEF inline token_t parser_peek(parser_t *t_parser, size_t t_offset) {
+  return rda_at(t_parser->tokenizer->tokens, t_parser->idx + t_offset);
+}
+
+INTERNAL_DEF inline token_t parser_consume(parser_t *t_parser) {
+  token_t tok = rda_at(t_parser->tokenizer->tokens, t_parser->idx);
+  t_parser->idx++;
+  return tok;
+}
 
 #endif  // PARSER_H_INCLUDED

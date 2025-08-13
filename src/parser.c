@@ -30,12 +30,6 @@ parser_t parser_init(const char *t_file) {
   return ret;
 }
 
-token_t parser_peek(parser_t *t_parser, size_t t_offset) {
-  return rda_at(t_parser->tokenizer->tokens, t_parser->idx + t_offset);
-}
-
-void parser_consume(parser_t *t_parser, size_t t_offset) {
-  t_parser->idx += t_offset + 1;
 }
 
 void parse(parser_t *t_parser) {
