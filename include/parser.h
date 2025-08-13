@@ -33,9 +33,8 @@ typedef struct {
   parser_t t_parser_name = parser_init(t_file)
 
 parser_t parser_init(const char *t_file);
+INTERNAL_DEF void parse_stmt_exit(parser_t *t_parser);
 void parse(parser_t *t_parser);
-token_t parser_peek(parser_t *t_parser, size_t t_offset);
-void parser_consume(parser_t *t_parser, size_t t_offset);
 void parser_deinit(parser_t *t_parser);
 
 INTERNAL_DEF inline token_t parser_peek(parser_t *t_parser, size_t t_offset) {
