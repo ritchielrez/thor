@@ -10,7 +10,7 @@ static inline void generator(const char *t_file, node_prg *prg) {
   FILE *file = fopen(t_file, "w");
   fprintf(file, "#include <stdio.h>\n");
   fprintf(file, "int main() {\n");
-  fprintf(file, "\texit(%ld);\n", rda_at((*prg), 0).value.stmt_exit.status);
+  fprintf(file, "\texit(%I64d);\n", rda_at((*prg), 0).value.stmt_exit.status);
   fprintf(file, "}\n");
   fclose(file);
 }
