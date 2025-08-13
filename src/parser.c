@@ -64,19 +64,17 @@ INTERNAL_DEF void parse_stmt_exit(parser_t *t_parser) {
 }
 
 void parse(parser_t *t_parser) {
+  bool error = false;
   while (t_parser->idx < rda_size(t_parser->tokenizer->tokens)) {
-    if (parser_peek(t_parser, 0).type == token_exit &&
-        parser_peek(t_parser, 1).type == token_open_paren &&
-        parser_peek(t_parser, 2).type == token_num &&
-        parser_peek(t_parser, 3).type == token_close_paren &&
-        (parser_peek(t_parser, 4).type == token_semicolon ||
-         parser_peek(t_parser, 4).type == token_newline)) {
-      node_stmt stmt;
-      stmt.type = stmt_exit;
-      stmt.value.stmt_exit.status =
-          atoi(rsv_get(parser_peek(t_parser, 2).value));
-      parser_consume(t_parser, 4);
-      rda_push_back(t_parser->prg, stmt, t_parser->allocator);
+    if (parser_peek(t_parser, 0).type == token_exit) {
+      parser_consume(t_parser);
+      parse_stmt_exit(t_parser);
+    } else {
+      fprintf(stderr,
+              "Error: invalid identifier \"%s\" at line %zu: column %zu\n",
+              rsv_get(parser_peek(t_parser, 0).value),
+              parser_peek(t_parser, 0).line, parser_peek(t_parser, 0).col);
+      exit(1);
     }
     // Things to ignore
     // Useless newlines
