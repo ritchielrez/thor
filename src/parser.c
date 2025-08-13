@@ -80,9 +80,9 @@ void parse(parser_t *t_parser) {
       exit(1);
     }
     // Things to ignore
-    // Useless newlines
-    if (parser_peek(t_parser, 0).type == token_newline) {
-      parser_consume(t_parser, 0);
+    if (parser_peek(t_parser, 0).type == token_newline ||
+        parser_peek(t_parser, 0).type == token_eof) {
+      parser_consume(t_parser);
     }
   }
 
