@@ -1,9 +1,12 @@
 #include "parser.h"
 
+#include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "allocator.h"
 #include "defines.h"
+#include "generator.h"
 #include "libraries/arena_allocator.h"
 #include "libraries/rit_dyn_arr.h"
 #include "libraries/rit_str.h"
@@ -82,6 +85,8 @@ void parse(parser_t *t_parser) {
       parser_consume(t_parser, 0);
     }
   }
+
+  if (!error) generator("exit.c", &(t_parser->prg));
 }
 
 void parser_deinit(parser_t *t_parser) {
