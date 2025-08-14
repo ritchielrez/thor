@@ -45,3 +45,4 @@ build/
 
 # Generated C files
 examples/*.c
+out.c
