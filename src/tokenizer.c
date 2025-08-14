@@ -141,8 +141,11 @@ void tokenize(tokenizer_t *t_tokenizer) {
       tokenizer_consume(t_tokenizer);
     }
   }
+
+#ifndef DEBUG
   rda_for_each(it, t_tokenizer->tokens) {
     printf("token_type: %s, token_value: %s, line: %zu, col: %zu\n",
            token_type_name(it->type), rsv_get(it->value), it->line, it->col);
   }
+#endif  // DEBUG
 }

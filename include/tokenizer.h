@@ -19,6 +19,13 @@ typedef enum {
   token_eof,
 } token_type;
 
+static const char *token_types_names[] = {
+    "token_identifier",  "token_exit",        "token_num",
+    "token_open_paren",  "token_close_paren", "token_open_curly",
+    "token_close_curly", "token_colon",       "token_semicolon",
+    "token_newline",     "token_eof",
+};
+
 typedef struct {
   token_type type;
   rsv value;
@@ -43,14 +50,8 @@ typedef struct {
 tokenizer_t tokenizer_init(const char *t_file, rstr_allocator *t_allocator);
 void tokenize(tokenizer_t *t_tokenizer);
 
-static const char *token_types[] = {
-    "token_identifier",  "token_exit",        "token_num",
-    "token_open_paren",  "token_close_paren", "token_open_curly",
-    "token_close_curly", "token_colon",       "token_semicolon",
-    "token_newline",     "token_eof",
-};
 INTERNAL_DEF inline const char *token_type_name(token_type t_token_type) {
-  return token_types[t_token_type];
+  return token_types_names[t_token_type];
 }
 
 INTERNAL_DEF inline char tokenizer_peek(tokenizer_t *t_tokenizer) {
