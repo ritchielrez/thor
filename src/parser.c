@@ -33,7 +33,6 @@ parser_t parser_init(const char *t_file) {
   return ret;
 }
 
-    exit(1);
 #define TOK_LINE parser_peek(t_parser, -2).line
 #define TOK_COL \
   parser_peek(t_parser, -2).col + rsv_size(parser_peek(t_parser, -2).value)
@@ -43,18 +42,19 @@ INTERNAL_DEF bool parse_stmt_exit(parser_t *t_parser) {
   if (parser_consume(t_parser).type != token_open_paren) {
     fprintf(stderr, "Error: missing a '(' at line %zu: column %zu\n", TOK_LINE,
             TOK_COL);
+    return false;
   }
   token_t num = parser_consume(t_parser);
   if (num.type != token_num) {
     fprintf(stderr,
             "Error: missing an exit status code at line %zu: column %zu\n",
             TOK_LINE, TOK_COL);
-    exit(1);
+    return false;
   }
   if (parser_consume(t_parser).type != token_close_paren) {
     fprintf(stderr, "Error: missing a ')' at line %zu: column %zu\n", TOK_LINE,
             TOK_COL);
-    exit(1);
+    return false;
   }
   if (parser_peek(t_parser, 0).type != token_semicolon &&
       parser_peek(t_parser, 0).type != token_newline) {
@@ -62,13 +62,14 @@ INTERNAL_DEF bool parse_stmt_exit(parser_t *t_parser) {
     fprintf(stderr,
             "Error: missing a new line or semicolon at line %zu: column %zu\n",
             TOK_LINE, TOK_COL);
-    exit(1);
+    return false;
   }
   parser_consume(t_parser);  // Consume the semicolon or newline
   node_stmt stmt;
   stmt.type = stmt_exit;
   stmt.value.stmt_exit.status = atoi(rsv_get(num.value));
   rda_push_back(t_parser->prg, stmt, t_parser->allocator);
+  return true;
 }
 
 void parse(parser_t *t_parser) {

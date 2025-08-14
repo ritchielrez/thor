@@ -1,6 +1,7 @@
 #ifndef PARSER_H_INCLUDED
 #define PARSER_H_INCLUDED
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "defines.h"
@@ -33,11 +34,11 @@ typedef struct {
   parser_t t_parser_name = parser_init(t_file)
 
 parser_t parser_init(const char *t_file);
-INTERNAL_DEF void parse_stmt_exit(parser_t *t_parser);
+INTERNAL_DEF bool parse_stmt_exit(parser_t *t_parser);
 void parse(parser_t *t_parser);
 void parser_deinit(parser_t *t_parser);
 
-INTERNAL_DEF inline token_t parser_peek(parser_t *t_parser, size_t t_offset) {
+INTERNAL_DEF inline token_t parser_peek(parser_t *t_parser, int64_t t_offset) {
   return rda_at(t_parser->tokenizer->tokens, t_parser->idx + t_offset);
 }
 
