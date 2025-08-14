@@ -69,12 +69,10 @@ INTERNAL_DEF void parse_stmt_exit(parser_t *t_parser) {
 void parse(parser_t *t_parser) {
   bool error = false;
   while (t_parser->idx < rda_size(t_parser->tokenizer->tokens)) {
-    if (parser_peek(t_parser, 0).type == token_exit) {
-      parser_consume(t_parser);
-      parse_stmt_exit(t_parser);
+    if (parser_peek(t_parser, 0).type == token_exit &&
+        parse_stmt_exit(t_parser)) {
     } else {
-      fprintf(stderr,
-              "Error: invalid identifier \"%s\" at line %zu: column %zu\n",
+      fprintf(stderr, "Error: invalid identifier %s at line %zu: column %zu\n",
               rsv_get(parser_peek(t_parser, 0).value),
               parser_peek(t_parser, 0).line, parser_peek(t_parser, 0).col);
       exit(1);
@@ -86,7 +84,7 @@ void parse(parser_t *t_parser) {
     }
   }
 
-  if (!error) generator("exit.c", &(t_parser->prg));
+  if (!error) generator(nullptr, &(t_parser->prg));
 }
 
 void parser_deinit(parser_t *t_parser) {
