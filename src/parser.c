@@ -33,33 +33,38 @@ parser_t parser_init(const char *t_file) {
   return ret;
 }
 
-INTERNAL_DEF void parse_stmt_exit(parser_t *t_parser) {
-  token_t open_paren = parser_consume(t_parser);
-  if (open_paren.type != token_open_paren) {
-    fprintf(stderr, "Error: missing a '(' at line %zu: column %zu\n",
-            parser_peek(t_parser, 0).line, parser_peek(t_parser, 0).col);
     exit(1);
+#define TOK_LINE parser_peek(t_parser, -2).line
+#define TOK_COL \
+  parser_peek(t_parser, -2).col + rsv_size(parser_peek(t_parser, -2).value)
+
+INTERNAL_DEF bool parse_stmt_exit(parser_t *t_parser) {
+  parser_consume(t_parser);  // Consume the exit token first
+  if (parser_consume(t_parser).type != token_open_paren) {
+    fprintf(stderr, "Error: missing a '(' at line %zu: column %zu\n", TOK_LINE,
+            TOK_COL);
   }
   token_t num = parser_consume(t_parser);
   if (num.type != token_num) {
     fprintf(stderr,
             "Error: missing an exit status code at line %zu: column %zu\n",
-            open_paren.line, open_paren.col + 1);
+            TOK_LINE, TOK_COL);
     exit(1);
   }
   if (parser_consume(t_parser).type != token_close_paren) {
-    fprintf(stderr, "Error: forgot to close the '(' at line %zu: column %zu\n",
-            open_paren.line, open_paren.col);
+    fprintf(stderr, "Error: missing a ')' at line %zu: column %zu\n", TOK_LINE,
+            TOK_COL);
     exit(1);
   }
   if (parser_peek(t_parser, 0).type != token_semicolon &&
       parser_peek(t_parser, 0).type != token_newline) {
+    parser_consume(t_parser);
     fprintf(stderr,
             "Error: missing a new line or semicolon at line %zu: column %zu\n",
-            parser_peek(t_parser, 0).line, parser_peek(t_parser, 0).col);
+            TOK_LINE, TOK_COL);
     exit(1);
   }
-  parser_consume(t_parser);
+  parser_consume(t_parser);  // Consume the semicolon or newline
   node_stmt stmt;
   stmt.type = stmt_exit;
   stmt.value.stmt_exit.status = atoi(rsv_get(num.value));
