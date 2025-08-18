@@ -52,11 +52,17 @@ void tokenize(tokenizer_t *t_tokenizer);
 
 INTERNAL_DEF inline const char *token_type_name(token_type t_token_type) {
   return token_types_names[t_token_type];
+/// @internal
+INTERNAL_DEF inline const char *token_type_to_str(token_type t_token_type) {
+  return token_type_strs[t_token_type];
 }
 
+/// @internal
 INTERNAL_DEF inline char tokenizer_peek(tokenizer_t *t_tokenizer) {
   return rstr_at(t_tokenizer->buffer, t_tokenizer->idx);
 }
+
+/// @internal
 INTERNAL_DEF void tokenizer_consume(tokenizer_t *t_tokenizer) {
   t_tokenizer->idx++;
   t_tokenizer->col++;

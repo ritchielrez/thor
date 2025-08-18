@@ -34,14 +34,19 @@ typedef struct {
   parser_t t_parser_name = parser_init(t_file)
 
 parser_t parser_init(const char *t_file);
+/// @internal
 INTERNAL_DEF bool parse_stmt_exit(parser_t *t_parser);
+/// @internal
+INTERNAL_DEF bool parse_stmt(parser_t *t_parser);
 void parse(parser_t *t_parser);
 void parser_deinit(parser_t *t_parser);
 
+/// @internal
 INTERNAL_DEF inline token_t parser_peek(parser_t *t_parser, int64_t t_offset) {
   return rda_at(t_parser->tokenizer->tokens, t_parser->idx + t_offset);
 }
 
+/// @internal
 INTERNAL_DEF inline token_t parser_consume(parser_t *t_parser) {
   token_t tok = rda_at(t_parser->tokenizer->tokens, t_parser->idx);
   t_parser->idx++;
