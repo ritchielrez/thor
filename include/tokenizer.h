@@ -23,12 +23,9 @@ typedef enum {
                 // find it
 } token_type;
 
-static const char *token_types_names[] = {
-    "token_identifier",  "token_exit",        "token_num",
-    "token_open_paren",  "token_close_paren", "token_open_curly",
-    "token_close_curly", "token_colon",       "token_semicolon",
-    "token_newline",     "token_eof",
-};
+static const char *token_type_strs[] = {
+    "identifier", "exit", "number", "(",       ")",       "{",
+    "}",          ":",    ";",      "newline", "invalid", "error"};
 
 typedef struct {
   size_t line;
@@ -54,8 +51,6 @@ typedef struct {
 tokenizer_t tokenizer_init(const char *t_file, rstr_allocator *t_allocator);
 void tokenize(tokenizer_t *t_tokenizer);
 
-INTERNAL_DEF inline const char *token_type_name(token_type t_token_type) {
-  return token_types_names[t_token_type];
 /// @internal
 INTERNAL_DEF inline const char *token_type_to_str(token_type t_token_type) {
   return token_type_strs[t_token_type];

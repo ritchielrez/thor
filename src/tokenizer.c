@@ -72,7 +72,7 @@ void tokenize(tokenizer_t *t_tokenizer) {
     // Symbols
     if (tokenizer_peek(t_tokenizer) == '(') {
       token_t tok = {.type = token_open_paren,
-                     .value = rsv_lit("("),
+                     .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
@@ -80,7 +80,7 @@ void tokenize(tokenizer_t *t_tokenizer) {
     }
     if (tokenizer_peek(t_tokenizer) == ')') {
       token_t tok = {.type = token_close_paren,
-                     .value = rsv_lit(")"),
+                     .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
@@ -88,7 +88,7 @@ void tokenize(tokenizer_t *t_tokenizer) {
     }
     if (tokenizer_peek(t_tokenizer) == '{') {
       token_t tok = {.type = token_open_curly,
-                     .value = rsv_lit("{"),
+                     .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
@@ -96,7 +96,7 @@ void tokenize(tokenizer_t *t_tokenizer) {
     }
     if (tokenizer_peek(t_tokenizer) == '}') {
       token_t tok = {.type = token_close_curly,
-                     .value = rsv_lit("}"),
+                     .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
@@ -104,7 +104,7 @@ void tokenize(tokenizer_t *t_tokenizer) {
     }
     if (tokenizer_peek(t_tokenizer) == ':') {
       token_t tok = {.type = token_colon,
-                     .value = rsv_lit(":"),
+                     .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
@@ -112,7 +112,7 @@ void tokenize(tokenizer_t *t_tokenizer) {
     }
     if (tokenizer_peek(t_tokenizer) == ';') {
       token_t tok = {.type = token_semicolon,
-                     .value = rsv_lit(";"),
+                     .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
@@ -120,7 +120,7 @@ void tokenize(tokenizer_t *t_tokenizer) {
     }
     if (tokenizer_peek(t_tokenizer) == '\n') {
       token_t tok = {.type = token_newline,
-                     .value = rsv_lit("\n"),
+                     .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
@@ -134,10 +134,10 @@ void tokenize(tokenizer_t *t_tokenizer) {
     }
   }
 
-#ifndef DEBUG
+#ifdef DEBUG
   rda_for_each(it, t_tokenizer->tokens) {
-    printf("token_type: %s, token_value: %s, line: %zu, col: %zu\n",
-           token_type_name(it->type), rsv_get(it->value), it->line, it->col);
+    printf("token: %s, token_value: %s, line: %zu, col: %zu\n",
+           token_type_to_str(it->type), rsv_get(it->value), it->line, it->col);
   }
 #endif  // DEBUG
 }
