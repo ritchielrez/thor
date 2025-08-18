@@ -1,9 +1,13 @@
 #ifndef DEFINES_H_INCLUDED
 #define DEFINES_H_INCLUDED
 
+#include "libraries/rit_str.h"
+
 #define BIN_NAME_MAX_SZ 16
 
 #define nullptr (void *)0
+
+#define RSV_NULL (rsv){.m_size = 0, .m_str = ""}
 
 #define INTERNAL_DEF static
 
