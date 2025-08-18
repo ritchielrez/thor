@@ -33,35 +33,22 @@ parser_t parser_init(const char *t_file) {
   return ret;
 }
 
-#define TOK_LINE parser_peek(t_parser, -2).line
-#define TOK_COL \
-  parser_peek(t_parser, -2).col + rsv_size(parser_peek(t_parser, -2).value)
-
 INTERNAL_DEF bool parse_stmt_exit(parser_t *t_parser) {
-  parser_consume(t_parser);  // Consume the exit token first
-  if (parser_consume(t_parser).type != token_open_paren) {
-    fprintf(stderr, "Error: missing a '(' at line %zu: column %zu\n", TOK_LINE,
-            TOK_COL);
+  if (parser_expected_consume(t_parser, token_open_paren).type == token_error) {
     return false;
   }
-  token_t num = parser_consume(t_parser);
-  if (num.type != token_num) {
-    fprintf(stderr,
-            "Error: missing an exit status code at line %zu: column %zu\n",
-            TOK_LINE, TOK_COL);
+  token_t num = parser_expected_consume(t_parser, token_num);
+  if (num.type == token_error) {
     return false;
   }
-  if (parser_consume(t_parser).type != token_close_paren) {
-    fprintf(stderr, "Error: missing a ')' at line %zu: column %zu\n", TOK_LINE,
-            TOK_COL);
+  if (parser_expected_consume(t_parser, token_close_paren).type ==
+      token_error) {
     return false;
   }
   if (parser_peek(t_parser, 0).type != token_semicolon &&
       parser_peek(t_parser, 0).type != token_newline) {
-    parser_consume(t_parser);
-    fprintf(stderr,
-            "Error: missing a new line or semicolon at line %zu: column %zu\n",
-            TOK_LINE, TOK_COL);
+    fprintf(stderr, "Error:%zu:%zu: expected a newline or ;\n", TOK_LINE,
+            TOK_COL);
     return false;
   }
   parser_consume(t_parser);  // Consume the semicolon or newline
@@ -72,25 +59,29 @@ INTERNAL_DEF bool parse_stmt_exit(parser_t *t_parser) {
   return true;
 }
 
+INTERNAL_DEF bool parse_stmt(parser_t *t_parser) {
+  if (parser_try_consume(t_parser, token_exit).type != token_invalid) {
+    return parse_stmt_exit(t_parser);
+  } else {
+    fprintf(stderr, "Error:%zu:%zu: invalid identifier %s\n",
+            parser_peek(t_parser, 0).line, parser_peek(t_parser, 0).col,
+            rsv_get(parser_peek(t_parser, 0).value));
+    parser_skip_statement(t_parser);
+    return false;
+  }
+}
+
 void parse(parser_t *t_parser) {
-  bool error = false;
+  bool success = true;
   while (t_parser->idx < rda_size(t_parser->tokenizer->tokens)) {
-    if (parser_peek(t_parser, 0).type == token_exit &&
-        parse_stmt_exit(t_parser)) {
-    } else {
-      fprintf(stderr, "Error: invalid identifier %s at line %zu: column %zu\n",
-              rsv_get(parser_peek(t_parser, 0).value),
-              parser_peek(t_parser, 0).line, parser_peek(t_parser, 0).col);
-      exit(1);
-    }
-    // Things to ignore
-    if (parser_peek(t_parser, 0).type == token_newline ||
-        parser_peek(t_parser, 0).type == token_eof) {
+    while (parser_peek(t_parser, 0).type == token_newline ||
+           parser_peek(t_parser, 0).type == token_semicolon) {
       parser_consume(t_parser);
     }
+    success = parse_stmt(t_parser) ? success : false;
   }
 
-  if (!error) generator(nullptr, &(t_parser->prg));
+  if (success) generator(nullptr, &(t_parser->prg));
 }
 
 void parser_deinit(parser_t *t_parser) {

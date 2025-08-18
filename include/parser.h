@@ -53,4 +53,57 @@ INTERNAL_DEF inline token_t parser_consume(parser_t *t_parser) {
   return tok;
 }
 
+#define TOK_LINE parser_peek(t_parser, -1).line
+#define TOK_COL \
+  parser_peek(t_parser, -1).col + rsv_size(parser_peek(t_parser, -1).value)
+
+/// @internal
+/// @brief Look for a statement terminator token.
+///
+/// Look for it until one is found and then consume that token.
+/// Thus the parser will be at a new statment after this function
+/// is finished executing.
+INTERNAL_DEF inline void parser_skip_statement(parser_t *t_parser) {
+  while (parser_peek(t_parser, 0).type != token_semicolon &&
+         parser_peek(t_parser, 0).type != token_newline) {
+    parser_consume(t_parser);
+  }
+  parser_consume(t_parser);
+}
+
+/// @internal
+/// @brief Try consuming a token of specific type.
+///
+/// If not found, return a `token_invalid`.
+INTERNAL_DEF inline token_t parser_try_consume(parser_t *t_parser,
+                                               token_type t_token_type) {
+  if (parser_peek(t_parser, 0).type != t_token_type) {
+    return (token_t){.type = token_invalid,
+                     .value = {.m_size = 0, .m_str = ""},
+                     .line = parser_peek(t_parser, 0).line,
+                     .col = parser_peek(t_parser, 0).col};
+  }
+  return parser_consume(t_parser);
+}
+
+/// @internal
+/// @brief Look for a token of specific type.
+///
+/// If not found, print an error and skip over until a newline, semicolon or
+/// EOF is found.
+INTERNAL_DEF inline token_t parser_expected_consume(parser_t *t_parser,
+                                                    token_type t_token_type) {
+  token_t tok = parser_try_consume(t_parser, t_token_type);
+  if (tok.type == token_invalid) {
+    fprintf(stderr, "Error:%zu:%zu: expected %s\n", TOK_LINE, TOK_COL,
+            token_type_to_str(t_token_type));
+    parser_skip_statement(t_parser);
+    return (token_t){.type = token_error,
+                     .value = {.m_size = 0, .m_str = ""},
+                     .line = parser_peek(t_parser, 0).line,
+                     .col = parser_peek(t_parser, 0).col};
+  }
+  return tok;
+}
+
 #endif  // PARSER_H_INCLUDED
