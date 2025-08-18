@@ -27,10 +27,10 @@ static const char *token_types_names[] = {
 };
 
 typedef struct {
-  token_type type;
-  rsv value;
   size_t line;
   size_t col;
+  rsv value;
+  token_type type;
 } token_t;
 
 typedef rda_struct(token_t) tokens_t;
