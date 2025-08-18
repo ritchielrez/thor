@@ -16,7 +16,6 @@ typedef enum {
   token_colon,
   token_semicolon,
   token_newline,
-  token_eof,
 } token_type;
 
 static const char *token_types_names[] = {

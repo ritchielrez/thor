@@ -128,14 +128,6 @@ void tokenize(tokenizer_t *t_tokenizer) {
       t_tokenizer->line++;
       t_tokenizer->col = 1;
     }
-    if (tokenizer_peek(t_tokenizer) == '\0') {
-      token_t tok = {.type = token_eof,
-                     .value = rsv_lit(""),
-                     .line = t_tokenizer->line,
-                     .col = t_tokenizer->col};
-      rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
-      tokenizer_consume(t_tokenizer);
-    }
     // Things to ignore
     if (tokenizer_peek(t_tokenizer) == ' ') {
       tokenizer_consume(t_tokenizer);
