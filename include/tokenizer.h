@@ -16,6 +16,11 @@ typedef enum {
   token_colon,
   token_semicolon,
   token_newline,
+  token_invalid,  // Used when parser tries to find a token of specific type but
+                  // did not find it
+
+  token_error,  // Used when parser is expecting one type of token but cannot
+                // find it
 } token_type;
 
 static const char *token_types_names[] = {
