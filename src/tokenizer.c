@@ -43,9 +43,9 @@ void tokenize(tokenizer_t *t_tokenizer) {
       char *str = "exit";
       if (!strcmp(rstr_cstr(value), str)) {
         tok.type = token_exit;
-        tok.value = rsv_rstr(value);
+        tok.value = RSV_NULL;
       } else {
-        tok.type = token_identifier;
+        tok.type = token_ident;
         tok.value = rsv_rstr(value);
       }
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);

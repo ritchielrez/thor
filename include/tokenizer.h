@@ -6,7 +6,7 @@
 #include "libraries/rit_str.h"
 
 typedef enum {
-  token_identifier,
+  token_ident,
   token_exit,
   token_num,
   token_open_paren,

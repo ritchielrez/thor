@@ -45,7 +45,6 @@ int main(int argc, char **argv) {
   } else if (!strcmp(subcmd, "com")) {
     parser_create(parser, "examples/exit.th");
     parse(&parser);
-    generator("examples/exit.c", &(parser.prg));
     parser_deinit(&parser);
   } else if (!strcmp(subcmd, "run")) {
     assert(0 && "run subcommand is not implemented");
