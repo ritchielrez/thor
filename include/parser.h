@@ -3,22 +3,52 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "defines.h"
 #include "libraries/rit_dyn_arr.h"
 #include "tokenizer.h"
 
+typedef enum {
+  bp_default,
+  bp_sub,
+  bp_add,
+  bp_mul,
+  bp_div,
+  bp_primary
+} binding_power;
 typedef enum { stmt_exit } node_stmt_type;
+typedef enum { expr_num, expr_bin } node_expr_type;
+
+typedef struct node_expr node_expr;
 
 typedef struct {
-  int64_t status;
+  int64_t num;
+} node_num_expr;
+
+typedef struct {
+  node_expr *lhs;
+  node_expr *rhs;
+  token_type op;
+} node_bin_expr;
+
+struct node_expr {
+  union {
+    node_num_expr num_expr;
+    node_bin_expr bin_expr;
+  } value;
+  node_expr_type type;
+};
+
+typedef struct {
+  node_expr *status;
 } node_stmt_exit;
 
 typedef struct {
-  node_stmt_type type;
   union {
-    node_stmt_exit stmt_exit;
+    node_stmt_exit exit_stmt;
   } value;
+  node_stmt_type type;
 } node_stmt;
 
 typedef rda_struct(node_stmt) node_prg;
@@ -34,6 +64,14 @@ typedef struct {
   parser_t t_parser_name = parser_init(t_file)
 
 parser_t parser_init(const char *t_file);
+/// @internal
+INTERNAL_DEF node_expr *parse_expr(parser_t *t_parser,
+                                   binding_power t_binding_power);
+/// @internal
+INTERNAL_DEF inline node_expr *parse_num_expr(parser_t *t_parser);
+/// @internal
+INTERNAL_DEF inline node_expr *parse_bin_expr(parser_t *t_parser,
+                                              node_expr *t_lhs);
 /// @internal
 INTERNAL_DEF bool parse_stmt_exit(parser_t *t_parser);
 /// @internal
@@ -106,4 +144,23 @@ INTERNAL_DEF inline token_t parser_expected_consume(parser_t *t_parser,
   return tok;
 }
 
+/// @internal
+INTERNAL_DEF inline binding_power binding_power_lookup(
+    token_type t_token_type) {
+  switch (t_token_type) {
+    case token_num:
+      return bp_primary;
+    case token_add:
+      return bp_add;
+    case token_sub:
+      return bp_sub;
+    case token_mul:
+      return bp_mul;
+    case token_div:
+      return bp_div;
+    default: {
+      return bp_default;
+    }
+  }
+}
 #endif  // PARSER_H_INCLUDED

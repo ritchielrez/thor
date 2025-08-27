@@ -33,14 +33,41 @@ parser_t parser_init(const char *t_file) {
   return ret;
 }
 
+INTERNAL_DEF node_expr *parse_expr(parser_t *t_parser,
+                                   binding_power t_binding_power) {
+  node_expr *expr = parse_num_expr(t_parser);
+  while (binding_power_lookup(parser_peek(t_parser, 0).type) >
+         t_binding_power) {
+    expr = parse_bin_expr(t_parser, expr);
+  }
+  return expr;
+}
+
+INTERNAL_DEF node_expr *parse_num_expr(parser_t *t_parser) {
+  token_t tok = parser_expected_consume(t_parser, token_num);
+  if (tok.type == token_error) exit(1);
+  node_num_expr num_expr = {.num = atoi(rsv_get(tok.value))};
+  node_expr *expr = arena_alloc_struct(t_parser->allocator->m_ctx, node_expr);
+  expr->type = expr_num;
+  expr->value.num_expr = num_expr;
+  return expr;
+}
+
+INTERNAL_DEF node_expr *parse_bin_expr(parser_t *t_parser, node_expr *t_lhs) {
+  node_expr *expr = arena_alloc_struct(t_parser->allocator->m_ctx, node_expr);
+  expr->type = expr_bin;
+  expr->value.bin_expr.lhs = t_lhs;
+  expr->value.bin_expr.op = parser_consume(t_parser).type;
+  expr->value.bin_expr.rhs =
+      parse_expr(t_parser, binding_power_lookup(expr->value.bin_expr.op));
+  return expr;
+}
+
 INTERNAL_DEF bool parse_stmt_exit(parser_t *t_parser) {
   if (parser_expected_consume(t_parser, token_open_paren).type == token_error) {
     return false;
   }
-  token_t num = parser_expected_consume(t_parser, token_num);
-  if (num.type == token_error) {
-    return false;
-  }
+  node_expr *expr = parse_expr(t_parser, bp_default);
   if (parser_expected_consume(t_parser, token_close_paren).type ==
       token_error) {
     return false;
@@ -54,13 +81,17 @@ INTERNAL_DEF bool parse_stmt_exit(parser_t *t_parser) {
   parser_consume(t_parser);  // Consume the semicolon or newline
   node_stmt stmt;
   stmt.type = stmt_exit;
-  stmt.value.stmt_exit.status = atoi(rsv_get(num.value));
+  stmt.value.exit_stmt.status = expr;
   rda_push_back(t_parser->prg, stmt, t_parser->allocator);
   return true;
 }
 
 INTERNAL_DEF bool parse_stmt(parser_t *t_parser) {
-  if (parser_try_consume(t_parser, token_exit).type != token_invalid) {
+  if (parser_peek(t_parser, 0).type == token_newline ||
+      parser_peek(t_parser, 0).type == token_semicolon) {
+    parser_consume(t_parser);
+    return true;
+  } else if (parser_try_consume(t_parser, token_exit).type != token_invalid) {
     return parse_stmt_exit(t_parser);
   } else {
     fprintf(stderr, "Error:%zu:%zu: invalid identifier %s\n",
@@ -74,10 +105,6 @@ INTERNAL_DEF bool parse_stmt(parser_t *t_parser) {
 void parse(parser_t *t_parser) {
   bool success = true;
   while (t_parser->idx < rda_size(t_parser->tokenizer->tokens)) {
-    while (parser_peek(t_parser, 0).type == token_newline ||
-           parser_peek(t_parser, 0).type == token_semicolon) {
-      parser_consume(t_parser);
-    }
     success = parse_stmt(t_parser) ? success : false;
   }
 
