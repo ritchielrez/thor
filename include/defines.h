@@ -7,8 +7,6 @@
 
 #define nullptr (void *)0
 
-#define RSV_NULL (rsv){.m_size = 0, .m_str = ""}
-
 #define INTERNAL_DEF static
 
 #if defined(_WIN32) || defined(__CYGWIN__)
