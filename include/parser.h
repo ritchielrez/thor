@@ -163,4 +163,44 @@ INTERNAL_DEF inline binding_power binding_power_lookup(
     }
   }
 }
+
+#ifdef DEBUG
+/// @internal
+INTERNAL_DEF inline void print_expr(const char *t_prefix, node_expr *t_expr) {
+  switch (t_expr->type) {
+    case expr_num: {
+      printf("[DEBUG] %s: %I64d\n", t_prefix, t_expr->value.num_expr.num);
+      break;
+    }
+    case expr_bin: {
+#define PREFIX_SZ 64
+      char prefix[PREFIX_SZ];
+      int written_chars = snprintf(prefix, PREFIX_SZ, "%s.lhs", t_prefix);
+      if (written_chars >= PREFIX_SZ) {
+        fprintf(stderr,
+                "[DEBUG] Error: prefix needs to be a bigger buffer, file: %s, "
+                "line: %u",
+                __FILE__, __LINE__);
+        exit(1);
+      }
+      print_expr(prefix, t_expr->value.bin_expr.lhs);
+
+      printf("[DEBUG] %s.op: %s\n", t_prefix,
+             token_type_to_str(t_expr->value.bin_expr.op));
+
+      written_chars = snprintf(prefix, PREFIX_SZ, "%s.rhs", t_prefix);
+      if (written_chars >= PREFIX_SZ) {
+        fprintf(stderr,
+                "[DEBUG] Error: prefix needs to be a bigger buffer, file: %s, "
+                "line: %u",
+                __FILE__, __LINE__);
+        exit(1);
+      }
+      print_expr(prefix, t_expr->value.bin_expr.rhs);
+      break;
+    }
+  }
+}
+#endif  // DEBUG
+
 #endif  // PARSER_H_INCLUDED

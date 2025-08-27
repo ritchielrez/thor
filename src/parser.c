@@ -108,7 +108,16 @@ void parse(parser_t *t_parser) {
     success = parse_stmt(t_parser) ? success : false;
   }
 
-  if (success) generator(nullptr, &(t_parser->prg));
+#ifdef DEBUG
+  rda_for_each(it, t_parser->prg) {
+    switch (it->type) {
+      case stmt_exit:
+        print_expr("stmt_exit.status", it->value.exit_stmt.status);
+    }
+  }
+#endif  // DEBUG
+
+  if (success) generate(nullptr, &(t_parser->prg));
 }
 
 void parser_deinit(parser_t *t_parser) {
