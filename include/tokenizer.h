@@ -9,6 +9,10 @@ typedef enum {
   token_ident,
   token_exit,
   token_num,
+  token_add,
+  token_sub,
+  token_mul,
+  token_div,
   token_open_paren,
   token_close_paren,
   token_open_curly,
@@ -24,8 +28,8 @@ typedef enum {
 } token_type;
 
 static const char *token_type_strs[] = {
-    "identifier", "exit", "number", "(",       ")",       "{",
-    "}",          ":",    ";",      "newline", "invalid", "error"};
+    "identifier", "exit", "number", "+", "-", "*",       "/",       "(",
+    ")",          "{",    "}",      ":", ";", "newline", "invalid", "error"};
 
 typedef struct {
   size_t line;
