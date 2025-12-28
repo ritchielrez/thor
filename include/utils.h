@@ -40,7 +40,6 @@ static inline void utils_putd(int num) { printf("%d\n", num); }
 static inline struct rstr utils_read_file(const char *t_file,
                                           rstr_allocator *t_allocator) {
   FILE *fp = fopen(t_file, "r");
-  rstr(stream_rstr, rsv_lit(""), t_allocator);
   rstr_getstream(fp, stream_rstr, t_allocator);
   return stream_rstr;
 }
