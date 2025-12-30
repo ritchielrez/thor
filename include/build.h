@@ -105,8 +105,9 @@ static inline cmd_proc_t cmd_run_async__(cmd_t *t_cmd) {
   }
   if (cpid == 0) {
     // Inside the child process
-    if (execvp(rda_at(*t_cmd, 0), (char *const *)rda_data(cmd)) < 0) {
-      fprintf(stderr, "Could not exe child process: %s\n", strerror(errno));
+    if (execvp(rda_at(cmd, 0), (char *const *)rda_data(cmd)) < 0) {
+      fprintf(stderr, "Could not exe child process %s: %s\n", rda_at(*t_cmd, 0),
+              strerror(errno));
       exit(1);
     }
     assert(0 && "unreachable");
