@@ -128,7 +128,9 @@ void com_and_run_prg(int *argc, char ***argv) {
     char *arg = utils_shift_args(argc, argv);
     cmd_append(run_cmd, &allocator, arg);
   }
-  printf("[INFO] Running executable...\n");
+  printf("[INFO] Running executable...\n[INFO] cmd: ");
+  rda_for_each(it, run_cmd) { printf("%s ", *it); }
+  putchar('\n');
   bool proc = cmd_run_sync(run_cmd);
   if (!proc) {
     fprintf(stderr, "Error: cmd_run_sync() failed, file: %s, line: %d\n",
