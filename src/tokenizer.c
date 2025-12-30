@@ -9,6 +9,15 @@
 #include "libraries/arena_allocator.h"
 #include "utils.h"
 
+INTERNAL_DEF char tokenizer_peek(tokenizer_t *t_tokenizer) {
+  return rstr_at(t_tokenizer->buffer, t_tokenizer->idx);
+}
+
+INTERNAL_DEF void tokenizer_consume(tokenizer_t *t_tokenizer) {
+  t_tokenizer->idx++;
+  t_tokenizer->col++;
+}
+
 tokenizer_t tokenizer_init(const char *t_file, rstr_allocator *t_allocator) {
   tokenizer_t ret = {.tokens = {},
                      .idx = 0,
