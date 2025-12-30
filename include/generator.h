@@ -45,6 +45,12 @@ static inline void generate(const char *t_file_name, node_prg *t_prg) {
         generate_stmt_exit(file, &(it->value.exit_stmt));
         break;
       }
+      case stmt_var_decl: {
+        fprintf(file, "\tint %s=", rsv_get(it->value.var_decl_stmt.name));
+        generate_expr(file, it->value.var_decl_stmt.expr);
+        fprintf(file, ";\n");
+        break;
+      }
       default: {
         fprintf(stderr, "Error: unknown statment type\n");
         exit(1);
