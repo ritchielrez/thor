@@ -78,7 +78,7 @@ void help_msg(const char *subcmd, const char *utils_prg_name) {
 void com_prg() {
   cmd(cflags, &allocator);
   if (!strcmp(cc, "clang") || !strcmp(cc, "gcc")) {
-    cmd_append(cflags, &allocator, "-g", "-Wall", "-Wextra",
+    cmd_append(cflags, &allocator, "-DDEBUG", "-g", "-Wall", "-Wextra",
                "-Wno-unknown-pragmas", /* "-fsanitize=address",  */ "-o",
                target);
   } else {
