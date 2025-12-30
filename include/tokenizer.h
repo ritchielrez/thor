@@ -29,7 +29,7 @@ typedef enum {
 } token_type;
 
 static const char *token_type_strs[] = {
-    "identifier", "exit", "number", "+", "-", "*",       "/",       "(",
+    "identifier", "exit", "number", "+", "-", "*",       "/",       "=",    "(",
     ")",          "{",    "}",      ":", ";", "newline", "invalid", "error"};
 
 typedef struct {
@@ -56,8 +56,7 @@ typedef struct {
 tokenizer_t tokenizer_init(const char *t_file, rstr_allocator *t_allocator);
 void tokenize(tokenizer_t *t_tokenizer);
 
-/// @internal
-INTERNAL_DEF inline const char *token_type_to_str(token_type t_token_type) {
+static inline const char *token_type_to_str(token_type t_token_type) {
   return token_type_strs[t_token_type];
 }
 
