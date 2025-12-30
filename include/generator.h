@@ -1,17 +1,21 @@
 #ifndef GENRATOR_H_INCLUDED
 #define GENERATOR_H_INCLUDED
 
+#include <inttypes.h>
 #include <stdio.h>
 
 #include "defines.h"
 #include "libraries/rit_dyn_arr.h"
+#include "libraries/rit_str.h"
 #include "parser.h"
 
 /// @internal
 INTERNAL_DEF inline void generate_expr(FILE *t_file, node_expr *t_expr) {
   switch (t_expr->type) {
     case expr_num: {
-      fprintf(t_file, "%I64d", t_expr->value.num_expr.num);
+      fprintf(t_file, "%" PRId64, t_expr->value.num_expr.value);
+      break;
+    }
     case expr_var: {
       fprintf(t_file, "%s", rsv_get(t_expr->value.var_expr));
       break;
