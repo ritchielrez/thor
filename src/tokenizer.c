@@ -71,28 +71,35 @@ void tokenize(tokenizer_t *t_tokenizer) {
     }
     // Operators
     else if (tokenizer_peek(t_tokenizer) == '+') {
-      token_t tok = {.type = token_add,
+      token_t tok = {.type = token_plus,
                      .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
       tokenizer_consume(t_tokenizer);
     } else if (tokenizer_peek(t_tokenizer) == '-') {
-      token_t tok = {.type = token_sub,
+      token_t tok = {.type = token_minus,
                      .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
       tokenizer_consume(t_tokenizer);
     } else if (tokenizer_peek(t_tokenizer) == '*') {
-      token_t tok = {.type = token_mul,
+      token_t tok = {.type = token_star,
                      .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
       rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
       tokenizer_consume(t_tokenizer);
     } else if (tokenizer_peek(t_tokenizer) == '/') {
-      token_t tok = {.type = token_div,
+      token_t tok = {.type = token_fslash,
+                     .value = RSV_NULL,
+                     .line = t_tokenizer->line,
+                     .col = t_tokenizer->col};
+      rda_push_back(t_tokenizer->tokens, tok, t_tokenizer->allocator);
+      tokenizer_consume(t_tokenizer);
+    } else if (tokenizer_peek(t_tokenizer) == '=') {
+      token_t tok = {.type = token_assignment,
                      .value = RSV_NULL,
                      .line = t_tokenizer->line,
                      .col = t_tokenizer->col};
