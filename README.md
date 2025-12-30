@@ -37,16 +37,16 @@ in Linux/Mac OSX:
 ```bash
 git clone https://github.com/ritchielrez/thor.git
 cd thor
-gcc build.c -o build
-./build com
+gcc ribs.c -o ribs
+./ribs com
 ```
 
 in Windows:
 ```cmd
 git clone https://github.com/ritchielrez/thor.git
 cd thor
-cl build.c
-build.exe com
+cl ribs.c
+ribs.exe com
 ```
 
 ## Usage

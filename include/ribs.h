@@ -176,4 +176,24 @@ static inline bool cmd_run_sync__(cmd_t *t_cmd) {
   return cmd_proc_wait(proc);
 }
 
+static inline bool make_dir(const char *t_path) {
+#if defined(BUILD_WINDOWS)
+  int result = _mkdir(t_path);
+#else
+  int result = mkdir(t_path, 0755);
+#endif  // BUILD_WINDOWS
+
+  if (result < 0) {
+    if (errno == EEXIST) {
+      printf("[INFO] Directory `%s` already exists\n", t_path);
+      return true;
+    }
+    fprintf(stderr, "Error: could not directory `%s`: %s\n", t_path,
+            strerror(errno));
+    return false;
+  }
+  printf("[INFO] Created directory `%s`\n", t_path);
+  return true;
+}
+
 #endif  // BUILD_H_INCLUDED

@@ -5,11 +5,11 @@
 
 #define ARENA_ALLOCATOR_IMPLEMENTATION
 #define RIT_STR_IMPLEMENTATION
-#include "include/build.h"
 #include "include/defines.h"
 #include "include/libraries/arena_allocator.h"
 #include "include/libraries/rit_dyn_arr.h"
 #include "include/libraries/rit_str.h"
+#include "include/ribs.h"
 #include "include/utils.h"
 
 #if defined(__clang__)
@@ -30,7 +30,7 @@ char *cc = "cl";
 
 #define nullptr (void *)0
 
-char *target = "thor";
+char *target = "build/thor";
 char *include_dir = "./include/";
 
 char *src_files[] = {"./src/allocator.c", "./src/main.c", "./src/parser.c",
@@ -76,6 +76,9 @@ void help_msg(const char *subcmd, const char *utils_prg_name) {
 }
 
 void com_prg() {
+  if (!make_dir("build/")) {
+    exit(1);
+  }
   cmd(cflags, &allocator);
   if (!strcmp(cc, "clang") || !strcmp(cc, "gcc")) {
     cmd_append(cflags, &allocator, "-DDEBUG", "-g", "-Wall", "-Wextra",
