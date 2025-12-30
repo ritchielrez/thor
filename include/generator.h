@@ -12,6 +12,8 @@ INTERNAL_DEF inline void generate_expr(FILE *t_file, node_expr *t_expr) {
   switch (t_expr->type) {
     case expr_num: {
       fprintf(t_file, "%I64d", t_expr->value.num_expr.num);
+    case expr_var: {
+      fprintf(t_file, "%s", rsv_get(t_expr->value.var_expr));
       break;
     }
     case expr_bin: {
