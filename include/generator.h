@@ -37,7 +37,7 @@ static inline void generate(const char *t_file_name, node_prg *t_prg) {
     file_name = t_file_name;
   }
   FILE *file = fopen(file_name, "w");
-  fprintf(file, "#include <stdio.h>\n");
+  fprintf(file, "#include <stdlib.h>\n");
   fprintf(file, "int main() {\n");
   rda_for_each(it, (*t_prg)) {
     switch (it->type) {
