@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
   if (!strcmp(subcmd, "help")) {
     help_msg(utils_shift_args_p(&argc, &argv), prg);
   } else if (!strcmp(subcmd, "com")) {
-    parser_create(parser, "examples/exit.th");
+    parser_create(parser, "examples/variables.th");
     parse(&parser);
     parser_deinit(&parser);
   } else if (!strcmp(subcmd, "run")) {
