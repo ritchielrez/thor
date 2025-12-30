@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -103,7 +104,8 @@ INTERNAL_DEF binding_power binding_power_lookup(token_type t_token_type) {
 INTERNAL_DEF void print_expr(const char *t_prefix, node_expr *t_expr) {
   switch (t_expr->type) {
     case expr_num: {
-      printf("[DEBUG] %s: %I64d\n", t_prefix, t_expr->value.num_expr.value);
+      printf("[DEBUG] %s: %" PRId64 "\n", t_prefix,
+             t_expr->value.num_expr.value);
       break;
     }
     case expr_var: {
