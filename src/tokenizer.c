@@ -169,7 +169,9 @@ void tokenize(tokenizer_t *t_tokenizer) {
       t_tokenizer->col = 1;
     }
     // Things to ignore
-    else if (tokenizer_peek(t_tokenizer) == ' ') {
+    else if (tokenizer_peek(t_tokenizer) == '\r') {
+      tokenizer_consume(t_tokenizer);
+    } else if (tokenizer_peek(t_tokenizer) == ' ') {
       tokenizer_consume(t_tokenizer);
     } else {
 #ifdef DEBUG
